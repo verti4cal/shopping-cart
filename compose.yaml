@@ -12,6 +12,8 @@ services:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-!ChangeMe!}
     volumes:
       - database_data:/var/lib/mysql:rw
+    ports:
+      - "3306:3306"
 ###< doctrine/doctrine-bundle ###
 
 volumes:
