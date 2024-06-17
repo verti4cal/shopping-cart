@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\CartItemRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UuidType;
+use Symfony\Component\Serializer\Annotation\Ignore;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: CartItemRepository::class)]
@@ -13,10 +14,8 @@ class CartItem
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Ignore]
     private ?int $id = null;
-
-    #[ORM\Column(type: UuidType::NAME)]
-    private ?string $uuid = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
@@ -27,28 +26,12 @@ class CartItem
 
     #[ORM\ManyToOne(inversedBy: 'items')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Ignore]
     private ?Cart $cart = null;
-
-    public function __construct()
-    {
-        $this->uuid = Uuid::v4();
-    }
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getUuid(): ?Uuid
-    {
-        return $this->uuid;
-    }
-
-    public function setUuid(Uuid $uuid): static
-    {
-        $this->uuid = $uuid;
-
-        return $this;
     }
 
     public function getProduct(): ?Product
@@ -85,5 +68,10 @@ class CartItem
         $this->cart = $cart;
 
         return $this;
+    }
+
+    public function getPrice(): ?int
+    {
+        return $this->product->getPrice() * $this->quantity;
     }
 }

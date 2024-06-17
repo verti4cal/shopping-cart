@@ -6,6 +6,7 @@ use App\Repository\CartRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Ignore;
 use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: CartRepository::class)]
@@ -14,12 +15,13 @@ class Cart
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Ignore]
     private ?int $id = null;
 
     /**
      * @var Collection<int, CartItem>
      */
-    #[ORM\OneToMany(targetEntity: CartItem::class, mappedBy: 'cart', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: CartItem::class, mappedBy: 'cart', orphanRemoval: true, cascade: ['persist'])]
     private Collection $items;
 
     #[ORM\Column(type: 'uuid')]
@@ -66,6 +68,19 @@ class Cart
         return $this;
     }
 
+    public function getItemByProductUuid(string $uuid): CartItem | false
+    {
+        return $this->items->filter(
+            fn (CartItem $item) => $item->getProduct()->getUuid()->__toString() === $uuid
+        )->first();
+    }
+
+    public function clearItems(): static
+    {
+        $this->items = new ArrayCollection();
+        return $this;
+    }
+
     public function getUuid(): ?Uuid
     {
         return $this->uuid;
@@ -76,5 +91,14 @@ class Cart
         $this->uuid = $uuid;
 
         return $this;
+    }
+
+    public function getTotal(): int
+    {
+        return array_reduce(
+            $this->items->toArray(),
+            fn ($total, CartItem $item) => $total + $item->getPrice(),
+            0
+        );
     }
 }
