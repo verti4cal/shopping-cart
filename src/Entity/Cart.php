@@ -75,12 +75,6 @@ class Cart
         )->first();
     }
 
-    public function clearItems(): static
-    {
-        $this->items = new ArrayCollection();
-        return $this;
-    }
-
     public function getUuid(): ?Uuid
     {
         return $this->uuid;

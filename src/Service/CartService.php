@@ -57,29 +57,12 @@ class CartService
     }
 
     /**
-     * Clear cart
-     * @return Cart
-     */
-    public function clearCart(): Cart
-    {
-        $cart = $this->getCart();
-        if (!$cart) {
-            return $cart;
-        }
-
-        $cart->clearItems();
-        $this->saveCart($cart);
-
-        return $cart;
-    }
-
-    /**
      * Remove cart
      * @return void
      */
     public function removeCart(): void
     {
-        $cart = $this->getCart();
+        $cart = $this->cartStorage->getCart();
         if (!$cart) {
             return;
         }
@@ -90,6 +73,13 @@ class CartService
         $this->cartStorage->setCart(null);
     }
 
+    /**
+     * Create cart item
+     * @param string $productUuid 
+     * @param int $quantity 
+     * @return CartItem 
+     * @throws NotFoundResourceException 
+     */
     public function createCartItem(string $productUuid, int $quantity = 1): CartItem
     {
         $product = $this->productService->getProduct($productUuid);
@@ -104,12 +94,16 @@ class CartService
         return $cartItem;
     }
 
+    /**
+     * Add product
+     * @param string $productUuid 
+     * @param int $quantity 
+     * @return Cart 
+     * @throws NotFoundResourceException 
+     */
     public function addProduct(string $productUuid, int $quantity = 1): Cart
     {
         $cart = $this->getCart();
-        if (!$cart) {
-            return $cart;
-        }
 
         $item = $cart->getItemByProductUuid($productUuid);
         if (!$item) {
@@ -124,12 +118,14 @@ class CartService
         return $cart;
     }
 
+    /**
+     * Remove product
+     * @param string $productUuid 
+     * @return Cart 
+     */
     public function removeProduct(string $productUuid): Cart
     {
         $cart = $this->getCart();
-        if (!$cart) {
-            return $cart;
-        }
 
         $item = $cart->getItemByProductUuid($productUuid);
         if (!$item) {
@@ -142,12 +138,16 @@ class CartService
         return $cart;
     }
 
+    /**
+     * Update quantity
+     * @param string $productUuid 
+     * @param int $quantity 
+     * @return Cart 
+     * @throws NotFoundResourceException 
+     */
     public function updateQuantity(string $productUuid, int $quantity): Cart
     {
         $cart = $this->getCart();
-        if (!$cart) {
-            return $cart;
-        }
 
         if ($quantity == 0) {
             return $this->removeProduct($productUuid);

@@ -5,8 +5,7 @@ namespace App\Service;
 use App\Entity\Product;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use RuntimeException;
-use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 class ProductService
 {
@@ -39,13 +38,13 @@ class ProductService
      * Delete product
      * @param string $uuid 
      * @return void 
-     * @throws RuntimeException 
+     * @throws NotFoundResourceException 
      */
     public function deleteProduct(string $uuid): void
     {
         $product = $this->getProduct($uuid);
         if (!$product) {
-            throw new RuntimeException('Product not found');
+            throw new NotFoundResourceException('Product not found');
         }
 
         $this->entityManager->remove($product);
@@ -77,13 +76,13 @@ class ProductService
      * @param string $name 
      * @param int $price 
      * @return Product 
-     * @throws RuntimeException 
+     * @throws NotFoundResourceException 
      */
     public function updateProduct(string $uuid, string $name, int $price): Product
     {
         $product = $this->getProduct($uuid);
         if (!$product) {
-            throw new RuntimeException('Product not found');
+            throw new NotFoundResourceException('Product not found');
         }
 
         $product->setName($name);
