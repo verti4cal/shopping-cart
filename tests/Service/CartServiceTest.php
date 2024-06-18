@@ -132,6 +132,29 @@ class CartServiceTest extends TestCase
         $this->assertEquals(1, $cart->getItems()->count());
     }
 
+    public function testAddProductExisting(): void
+    {
+        $productUuid = Uuid::v4();
+        $product = (new Product())->setUuid($productUuid)->setPrice(100);
+        $cartItem = (new CartItem())->setProduct($product)->setQuantity(1);
+
+        $cart = (new Cart())->addItem($cartItem);
+
+        $this->cartStorage
+            ->expects($this->any())
+            ->method('getCart')
+            ->willReturn($cart);
+
+        $this->productService->expects($this->any())->method('getProduct')
+            ->with($productUuid->__toString())
+            ->willReturn($product);
+
+        $cart = $this->cartService->addProduct($productUuid->__toString());
+        $this->assertInstanceOf(Cart::class, $cart);
+        $this->assertEquals(1, $cart->getItems()->count());
+        $this->assertEquals(200, $cart->getTotal());
+    }
+
     public function testAddProductFailed(): void
     {
         $this->productService->expects($this->any())->method('getProduct')
@@ -212,5 +235,62 @@ class CartServiceTest extends TestCase
         $this->assertInstanceOf(Cart::class, $cart);
         $this->assertEquals(2, $cart->getItems()->count());
         $this->assertEquals(400, $cart->getTotal());
+    }
+
+    public function testUpdateQuantityRemove(): void
+    {
+        $product1Uuid = Uuid::v4();
+        $product2Uuid = Uuid::v4();
+
+        $product1 = (new Product())->setUuid($product1Uuid)->setPrice(100);
+        $product2 = (new Product())->setUuid($product2Uuid)->setPrice(100);
+
+        $cartItem1 = (new CartItem())->setProduct($product1)->setQuantity(1);
+        $cartItem2 = (new CartItem())->setProduct($product2)->setQuantity(2);
+
+        $cart = (new Cart())->addItem($cartItem1)->addItem($cartItem2);
+
+        $this->cartStorage
+            ->expects($this->any())
+            ->method('getCart')
+            ->willReturn($cart);
+
+        $this->assertEquals(300, $cart->getTotal());
+
+        $cart = $this->cartService->updateQuantity($product1Uuid->__toString(), 0);
+
+        $this->assertInstanceOf(Cart::class, $cart);
+        $this->assertEquals(1, $cart->getItems()->count());
+        $this->assertEquals(200, $cart->getTotal());
+    }
+
+    public function testUpdateQuantityAdd(): void
+    {
+        $product1Uuid = Uuid::v4();
+        $product2Uuid = Uuid::v4();
+
+        $product1 = (new Product())->setUuid($product1Uuid)->setPrice(100);
+        $product2 = (new Product())->setUuid($product2Uuid)->setPrice(100);
+
+        $cartItem1 = (new CartItem())->setProduct($product1)->setQuantity(1);
+
+        $cart = (new Cart())->addItem($cartItem1);
+
+        $this->cartStorage
+            ->expects($this->any())
+            ->method('getCart')
+            ->willReturn($cart);
+
+        $this->productService->expects($this->any())->method('getProduct')
+            ->with($product2Uuid->__toString())
+            ->willReturn($product2);
+
+        $this->assertEquals(100, $cart->getTotal());
+
+        $cart = $this->cartService->updateQuantity($product2Uuid->__toString(), 1);
+
+        $this->assertInstanceOf(Cart::class, $cart);
+        $this->assertEquals(2, $cart->getItems()->count());
+        $this->assertEquals(200, $cart->getTotal());
     }
 }

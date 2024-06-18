@@ -128,9 +128,6 @@ class CartService
         $cart = $this->getCart();
 
         $item = $cart->getItemByProductUuid($productUuid);
-        if (!$item) {
-            return $cart;
-        }
 
         $cart->removeItem($item);
         $this->saveCart($cart);

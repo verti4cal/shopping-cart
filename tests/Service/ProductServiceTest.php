@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 class ProductServiceTest extends TestCase
 {
@@ -37,8 +38,6 @@ class ProductServiceTest extends TestCase
     public function setUp(): void
     {
         $this->productRepository = $this->createMock(ProductRepository::class);
-        $this->mockRepositoryFunctions();
-
         $this->entityManager = $this->createMock(EntityManager::class);
 
         $this->productService = new ProductService($this->productRepository, $this->entityManager);
@@ -46,6 +45,8 @@ class ProductServiceTest extends TestCase
 
     public function testCreateProduct(): void
     {
+        $this->mockRepositoryFunctions();
+
         $this->entityManager->expects($this->once())
             ->method('persist')
             ->with($this->isInstanceOf(Product::class));
@@ -61,6 +62,8 @@ class ProductServiceTest extends TestCase
 
     public function testUpdateProduct(): void
     {
+        $this->mockRepositoryFunctions();
+
         $this->entityManager->expects($this->once())
             ->method('persist')
             ->with($this->isInstanceOf(Product::class));
@@ -79,8 +82,23 @@ class ProductServiceTest extends TestCase
         $this->assertEquals(100, $response->getPrice());
     }
 
+    public function testUpdateProductFailed(): void
+    {
+        $this->entityManager->expects($this->never())
+            ->method('persist');
+
+        $this->entityManager->expects($this->never())
+            ->method('flush');
+
+        $this->expectException(NotFoundResourceException::class);
+
+        $this->productService->updateProduct("12345", 'test', 100);
+    }
+
     public function testDeleteProduct(): void
     {
+        $this->mockRepositoryFunctions();
+
         $this->entityManager->expects($this->once())
             ->method('remove')
             ->with($this->isInstanceOf(Product::class));
@@ -91,8 +109,23 @@ class ProductServiceTest extends TestCase
         $this->productService->deleteProduct("1234");
     }
 
+    public function testDeleteProductFailed(): void
+    {
+        $this->entityManager->expects($this->never())
+            ->method('remove');
+
+        $this->entityManager->expects($this->never())
+            ->method('flush');
+
+        $this->expectException(NotFoundResourceException::class);
+
+        $this->productService->deleteProduct("12345");
+    }
+
     public function testGetProduct(): void
     {
+        $this->mockRepositoryFunctions();
+
         $response = $this->productService->getProduct("1234");
         $this->assertInstanceOf(Product::class, $response);
         $this->assertEquals('test', $response->getName());
@@ -101,6 +134,8 @@ class ProductServiceTest extends TestCase
 
     public function testGetProducts(): void
     {
+        $this->mockRepositoryFunctions();
+
         $response = $this->productService->getProducts();
         $this->assertIsArray($response);
     }
