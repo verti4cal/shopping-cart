@@ -72,10 +72,10 @@ class CartStorage
         }
 
         if (null === $cart) {
-            $this->requestStack->getSession()->remove(self::CART_KEY);
+            $session->remove(self::CART_KEY);
             return;
         }
 
-        $this->requestStack->getSession()->set(self::CART_KEY, $cart->getUuid());
+        $session->set(self::CART_KEY, $cart->getUuid());
     }
 }
