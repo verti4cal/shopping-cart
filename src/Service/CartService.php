@@ -37,7 +37,7 @@ class CartService
      * Create cart
      * @return Cart 
      */
-    public function createCart(): Cart
+    private function createCart(): Cart
     {
         $cart = new Cart();
         return $cart;
