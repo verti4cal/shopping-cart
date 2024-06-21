@@ -3,6 +3,11 @@
 - make
 - docker
 
+# Configuration
+
+- copy .env.dist to .env.prod.local -> change APP_ENV to prod
+- copy .env.dist to .env.dev.local
+
 # Running
 
 The webserver is running under port 8000.
