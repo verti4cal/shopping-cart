@@ -14,7 +14,8 @@ The webserver is running under port 8000.
 
 <b>Prod</b><br/>
 Run the command `make up`<br/>
-This is building the docker containers and preloading the database.<br>
+This is building the docker containers.<br>
+Hint: this is not preloading the database, but there is a dump file under `dump-app.sql`<br/>
 <b>Rebuild:</b><br/>
 Run the command `make build`
 
