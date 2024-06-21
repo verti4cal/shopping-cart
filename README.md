@@ -3,28 +3,31 @@
 - make
 - docker
 
-# Configuration
-
-Copy the .env.dist file to .env.local
-
-<b>Docker</b><br/>
-- change APP_ENV to 'prod'
-
-<b>Non Docker</b><br/>
-- change APP_ENV to 'prod'
-- change DATABASE_URL to the used database
-
 # Running
-
-Run the command `make up`<br/>
-This is building the docker containers and preloading the database.
 
 The webserver is running under port 8000.
 
+<b>Prod</b><br/>
+Run the command `make up`<br/>
+This is building the docker containers and preloading the database.<br>
+<b>Rebuild:</b><br/>
+Run the command `make build`
+
+<b>Dev</b><br/>
+Run the command `make dev`<br/>
+This is building the docker containers and preloading the database.<br>
+<b>Rebuild:</b><br/>
+Run the command `make builddev`
+
+<b>Hint</b><br/>
+When switching between dev and prod, a rebuild has to be done.
+
 # Testing
 
+Run the Dev containers<br/>
 Run the command `make test`<br/>
-This is running phpstan and the symfony tests
+This is running phpstan and the symfony tests<br/>
+Coverage reports are available under `http://localhost:8000/coverage/index.html`
 
 # Postman
 
