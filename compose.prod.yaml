@@ -10,4 +10,5 @@ services:
       context: .
       target: php_prod
     depends_on:
-      - database
+      database:
+        condition: service_healthy

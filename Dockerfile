@@ -92,6 +92,8 @@ RUN echo "opcache.validate_timestamps=0" >> "$PHP_INI_DIR/php.ini"
 
 COPY --chown=www-data .env.prod.local .env
 
+RUN rm -rf tests
+
 USER www-data
 
 RUN composer install --optimize-autoloader --no-dev
