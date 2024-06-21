@@ -1,0 +1,22 @@
+services:
+  php:
+    restart: unless-stopped
+    ports:
+      # HTTP
+      - target: 80
+        published: ${HTTP_PORT:-8000}
+        protocol: tcp
+    build:
+      context: .
+      target: php_dev
+    depends_on:
+      database:
+        condition: service_healthy
+  mailer:
+    image: axllent/mailpit
+    ports:
+      - "1025"
+      - "8025"
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1

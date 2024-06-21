@@ -1,0 +1,13 @@
+services:
+  php:
+    restart: unless-stopped
+    ports:
+      # HTTP
+      - target: 80
+        published: ${HTTP_PORT:-8000}
+        protocol: tcp
+    build:
+      context: .
+      target: php_prod
+    depends_on:
+      - database

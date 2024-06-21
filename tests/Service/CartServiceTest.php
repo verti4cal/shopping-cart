@@ -98,29 +98,6 @@ class CartServiceTest extends TestCase
         $this->cartService->removeCart();
     }
 
-    public function testCreateCartItemSuccess(): void
-    {
-        $this->productService->expects($this->any())->method('getProduct')
-            ->with('product-uuid')
-            ->willReturn(new Product());
-
-        $cartItem = $this->cartService->createCartItem('product-uuid');
-        $this->assertInstanceOf(CartItem::class, $cartItem);
-        $this->assertEquals(1, $cartItem->getQuantity());
-    }
-
-    public function testCreateCartItemFailed(): void
-    {
-        $this->productService->expects($this->any())->method('getProduct')
-            ->with('product-uuid')
-            ->willReturn(null);
-
-        $this->expectException(NotFoundResourceException::class);
-
-        $cartItem = $this->cartService->createCartItem('product-uuid');
-        $this->assertNull($cartItem);
-    }
-
     public function testAddProductSuccess(): void
     {
         $this->productService->expects($this->any())->method('getProduct')

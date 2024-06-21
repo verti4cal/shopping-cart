@@ -18,7 +18,7 @@ class CartService
     }
 
     /**
-     * Get cart
+     * Get saved cart from session
      * @return Cart
      */
     public function getCart(): Cart
@@ -44,7 +44,7 @@ class CartService
     }
 
     /**
-     * Save cart
+     * Save cart to database 
      * @param Cart $cart 
      * @return void
      */
@@ -57,7 +57,7 @@ class CartService
     }
 
     /**
-     * Remove cart
+     * Remove cart from database
      * @return void
      */
     public function removeCart(): void
@@ -80,7 +80,7 @@ class CartService
      * @return CartItem 
      * @throws NotFoundResourceException 
      */
-    public function createCartItem(string $productUuid, int $quantity = 1): CartItem
+    private function createCartItem(string $productUuid, int $quantity = 1): CartItem
     {
         $product = $this->productService->getProduct($productUuid);
         if (!$product) {
@@ -95,7 +95,7 @@ class CartService
     }
 
     /**
-     * Add product
+     * Add product to cart
      * @param string $productUuid 
      * @param int $quantity 
      * @return Cart 
@@ -119,7 +119,7 @@ class CartService
     }
 
     /**
-     * Remove product
+     * Remove product from cart
      * @param string $productUuid 
      * @return Cart 
      */
@@ -136,7 +136,7 @@ class CartService
     }
 
     /**
-     * Update quantity
+     * Update quantity of product in cart
      * @param string $productUuid 
      * @param int $quantity 
      * @return Cart 
